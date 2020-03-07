@@ -1,3 +1,15 @@
 .sheet{
-    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
+
+.column {
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+    align-items: stretch;
+}
+
+
+
