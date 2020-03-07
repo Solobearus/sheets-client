@@ -29,21 +29,22 @@ const Sheet = ({ rows, cols }) => {
         setCells(mock.Cells);
     }, [])
 
-    const getCellValue = (i, j) => {
-        return cells[j] && cells[j][ALPHABET[i]] ? cells[j][ALPHABET[i]] : [ALPHABET[i]] + j;
+    const getCellValue = (rowIndex, colIndex) => {
+        return ALPHABET[colIndex]+rowIndex
     }
 
-    const getRow = (row) => {
+    const getRow = (rowIndex) => {
         return (new Array(cols))
             .fill(0)
-            .map((value, col) => (<Cell key={col} value={getCellValue(row, col)} index={{ col: col, row: ALPHABET[row] }}></Cell>))
+            .map((value, colIndex) => (<Cell key={colIndex} value={getCellValue(rowIndex, colIndex)}
+             index={{ col: ALPHABET[colIndex], row: rowIndex }}></Cell>))
     }
 
     return (
         <div className="sheet" data-testid="sheet">
             {
-                (new Array(rows)).fill(0).map((column, row) => {
-                    return (<div className="column" key={row}>{getRow(row)}</div>)
+                (new Array(rows)).fill(0).map((column, rowIndex) => {
+                    return (<div className="row" key={rowIndex}>{getRow(rowIndex)}</div>)
                 })
             }
         </div>

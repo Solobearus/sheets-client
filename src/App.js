@@ -5,7 +5,7 @@ import Sheet from './components/Sheet/Sheet'
 function App() {
   return (
     <div className="App">
-      <Sheet rows={3} cols={10}></Sheet>
+      <Sheet rows={20} cols={3}></Sheet>
     </div>
   );
 }

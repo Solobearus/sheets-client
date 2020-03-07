@@ -4,11 +4,12 @@
     flex-wrap: wrap;
 }
 
-.column {
+.row {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     height: max-content;
     align-items: stretch;
+    width: 100%;
 }
 
 
