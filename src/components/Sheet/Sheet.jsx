@@ -10,34 +10,28 @@ const Sheet = ({ rows, cols }) => {
 
     const [cells, setCells] = useState({});
 
-    const mock = {
-        "Cells":
-        {
-            "1": {
-                "a": "aaaaaa1 aaaaaa1 aaaaaa1 aaaaa1",
-                "b": "bbbbbb1",
-            },
-            "2": {
-                "a": "aaaaaa12",
-                "b": "bbbbbb12",
-                "c": "ccccccc2",
-            }
-        }
-    }
-
+    
     useEffect(() => {
-        setCells(mock.Cells);
+        fetch('http://localhost:3000/api/Sheet/Get')
+            .then(res => res.json())
+            .then(res => setCells(res.Cells))
     }, [])
 
     const getCellValue = (rowIndex, colIndex) => {
-        return ALPHABET[colIndex]+rowIndex
+        const rowData = cells[rowIndex + 1 + '']
+        if (!rowData) {
+            return ''
+        }
+        const cellData = rowData[ALPHABET[colIndex]]
+
+        return cellData || ''
     }
 
     const getRow = (rowIndex) => {
         return (new Array(cols))
             .fill(0)
             .map((value, colIndex) => (<Cell key={colIndex} value={getCellValue(rowIndex, colIndex)}
-             index={{ col: ALPHABET[colIndex], row: rowIndex }}></Cell>))
+                index={{ col: ALPHABET[colIndex], row: rowIndex + 1 }}></Cell>))
     }
 
     return (
