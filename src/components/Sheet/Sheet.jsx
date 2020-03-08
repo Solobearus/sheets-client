@@ -9,13 +9,22 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWZ'.toLowerCase().split('')
 const Sheet = ({ rows, cols }) => {
 
     const [cells, setCells] = useState({});
+    const [sheet, setSheet] = useState([]);
 
-    
     useEffect(() => {
+        setSheet(createSheet());
         fetch('http://localhost:3000/api/Sheet/Get')
             .then(res => res.json())
-            .then(res => setCells(res.Cells))
+            .then(res => {
+                setCells(res.Cells)
+                setSheet(createSheet());
+            })
     }, [])
+
+    useEffect(() => {
+        setSheet(createSheet());
+    }, [cells])
+
 
     const getCellValue = (rowIndex, colIndex) => {
         const rowData = cells[rowIndex + 1 + '']
@@ -34,13 +43,17 @@ const Sheet = ({ rows, cols }) => {
                 index={{ col: ALPHABET[colIndex], row: rowIndex + 1 }}></Cell>))
     }
 
+    function createSheet() {
+        return (new Array(rows)).fill(0).map((column, rowIndex) => {
+            return (<div className="row" key={rowIndex}>{getRow(rowIndex)}</div>)
+        })
+    }
+
     return (
         <div className="sheet" data-testid="sheet">
-            {
-                (new Array(rows)).fill(0).map((column, rowIndex) => {
-                    return (<div className="row" key={rowIndex}>{getRow(rowIndex)}</div>)
-                })
-            }
+            {console.log('sheet rerender')}
+            {/* {sheet} */}
+            {/* {createSheet()} */}
         </div>
     )
 }

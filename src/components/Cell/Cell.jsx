@@ -41,7 +41,7 @@ const Cell = ({ value, index }) => {
             .catch();
     }
 
-    console.log(index, value, cellValue);
+    // console.log(index, value, cellValue);
     
     return editing ?
         <input
