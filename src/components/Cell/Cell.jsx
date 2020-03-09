@@ -1,6 +1,5 @@
-import React, { useState ,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import './Cell.css'
-
 
 const Cell = ({ value, index }) => {
     const [cellValue, setCellValue] = useState(value);
@@ -9,6 +8,7 @@ const Cell = ({ value, index }) => {
     useEffect(() => {
         setCellValue(value);
     }, [value])
+
     const onChangeHandle = (event) => {
         setCellValue(event.target.value);
     }
@@ -19,14 +19,14 @@ const Cell = ({ value, index }) => {
 
     const onBlurHandle = () => {
         setEditing(false);
-        console.log(index);
-        
         updateServer();
     }
 
     const updateServer = () => {
         index.text = cellValue;
 
+        console.log(index);
+        
         fetch('http://localhost:3000/api/Sheet/Save',
             {
                 method: 'POST',
@@ -37,12 +37,12 @@ const Cell = ({ value, index }) => {
                     index
                 )
             })
-            .then()
+            .then(res => {
+                if (res.status === 200) console.log('yay');
+            })
             .catch();
     }
 
-    // console.log(index, value, cellValue);
-    
     return editing ?
         <input
             type="text"
