@@ -6,3 +6,7 @@
     width: 100px;
     min-height: 100%;
 }
+
+.editing{
+    background: rgb(197, 255, 200);
+}

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import './Cell.css'
 
-const Cell = React.memo(({ value, col, row, updateServer }) => {
-    const [cellValue, setCellValue] = useState(value);
+const Cell = React.memo(({ cellText, editingBySomeone, col, row, updateServerCellChange, updateServerCellStartEdit }) => {
+    const [cellValue, setCellValue] = useState(cellText);
     const [editing, setEditing] = useState(false);
 
     useEffect(() => {
-        setCellValue(value);
-    }, [value])
+        setCellValue(cellText);
+    }, [cellText])
 
     const onChangeHandle = (event) => {
         setCellValue(event.target.value);
@@ -15,12 +15,12 @@ const Cell = React.memo(({ value, col, row, updateServer }) => {
 
     const onClickHandle = () => {
         setEditing(true);
+        updateServerCellStartEdit(col, row);
     }
 
     const onBlurHandle = () => {
         setEditing(false);
-
-        updateServer(col, row, cellValue);
+        updateServerCellChange(col, row, cellValue);
     }
 
     return editing ?
@@ -33,8 +33,8 @@ const Cell = React.memo(({ value, col, row, updateServer }) => {
             autoFocus />
         :
         <div
-            className="cell"
-            onClick={() => onClickHandle()}
+            className={`cell ${editingBySomeone && 'editing'}`}
+            onClick={() => !editingBySomeone && onClickHandle()}
         >{cellValue}
         </div>
 })
