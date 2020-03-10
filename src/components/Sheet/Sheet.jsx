@@ -23,13 +23,11 @@ const Sheet = ({ rows, cols }) => {
         const socket = io('http://localhost:3000');
 
         socket.on("onCellSave", function (cells) {
-            console.log('test');
-            
             onCellSave(cells);
         });
 
         return () => socket.disconnect();
-    })
+    },[])
 
     useEffect(() => {
         setSheet(createSheet())
