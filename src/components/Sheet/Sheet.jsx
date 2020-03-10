@@ -18,8 +18,6 @@ const Sheet = ({ rows, cols }) => {
             .then(res => {
                 setCells(res.Cells)
             })
-
-
     }, [])
 
     useEffect(() => {

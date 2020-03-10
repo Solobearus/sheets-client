@@ -25,8 +25,6 @@ const Cell = ({ value, index }) => {
     const updateServer = () => {
         index.text = cellValue;
 
-        console.log(index);
-        
         fetch('http://localhost:3000/api/Sheet/Save',
             {
                 method: 'POST',
@@ -37,10 +35,7 @@ const Cell = ({ value, index }) => {
                     index
                 )
             })
-            .then(res => {
-                if (res.status === 200) console.log('yay');
-            })
-            .catch();
+            .catch(err => console.error(err))
     }
 
     return editing ?
