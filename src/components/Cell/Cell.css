@@ -7,6 +7,77 @@
     min-height: 100%;
 }
 
-.editing{
-    background: rgb(197, 255, 200);
+.editing {
+    background: rgb(240, 255, 241);
+    animation-name: editing;
+    animation-duration: 1.6s;
+    animation-iteration-count: infinite;
+}
+
+.letter {
+    animation-name: editingLetters;
+    animation-duration: 1.6s;
+    animation-iteration-count: infinite;
+}
+
+.letter:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.letter:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.letter:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.letter:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.letter:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.letter:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.letter:nth-child(7) {
+    animation-delay: 0.7s;
+}
+
+.letter:nth-child(8) {
+    animation-delay: 0.8s;
+}
+.letter:nth-child(9) {
+    animation-delay: 0.9s;
+}
+.letter:nth-child(10) {
+    animation-delay: 1s;
+}
+
+@keyframes editingLetters {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes editing {
+    0% {
+        background-color: rgb(209, 255, 212);
+    }
+    50% {
+        background-color: rgb(160, 233, 165);
+    }
+    100% {
+        background-color: rgb(209, 255, 212);
+    }
 }

@@ -35,7 +35,7 @@ const Cell = React.memo(({ cellText, editingBySomeone, col, row, updateServerCel
         <div
             className={`cell ${editingBySomeone && 'editing'}`}
             onClick={() => !editingBySomeone && onClickHandle()}
-        >{cellValue}
+        >{editingBySomeone ? 'editing...'.split('').map(letter => <span className="letter">{letter}</span>) : cellValue}
         </div>
 })
 
