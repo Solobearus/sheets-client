@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './Cell.css'
 
-const Cell = ({ value, index, updateServer }) => {
+const Cell = React.memo(({ value, col, row, updateServer }) => {
     const [cellValue, setCellValue] = useState(value);
     const [editing, setEditing] = useState(false);
 
@@ -19,7 +19,8 @@ const Cell = ({ value, index, updateServer }) => {
 
     const onBlurHandle = () => {
         setEditing(false);
-        updateServer(index, cellValue);
+
+        updateServer(col, row, cellValue);
     }
 
     return editing ?
@@ -36,6 +37,6 @@ const Cell = ({ value, index, updateServer }) => {
             onClick={() => onClickHandle()}
         >{cellValue}
         </div>
-}
+})
 
 export default Cell

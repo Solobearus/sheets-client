@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import './Sheet.css'
 import Cell from '../Cell/Cell';
 import io from 'socket.io-client';
@@ -6,83 +6,114 @@ import io from 'socket.io-client';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase().split('')
 
-const Sheet = ({ rows, cols }) => {
-    
+const Sheet = React.memo(({ rows, cols }) => {
+
     const [cells, setCells] = useState({});
     const [sheet, setSheet] = useState(() => createSheet());
-    
+
     useEffect(() => {
         fetch('http://localhost:3000/api/Sheet/Get')
-        .then(res => res.json())
-        .then(res => {
-            setCells(res.Cells)
-        })
+            .then(res => res.json())
+            .then(res => {
+                setCells(res.Cells)
+            })
     }, [])
-    
+
     useEffect(() => {
         const socket = io('http://localhost:3000');
 
-        socket.on("onCellSave", function (cells) {
-            onCellSave(cells);
+        socket.on("onCellSave", function ({ row, col, text }) {
+
+            setCells(cell => {
+                const newCells = { ...cells }
+                newCells[row] = { ...cell[row], [col]: text }
+
+                return newCells;
+            })
         });
 
         return () => socket.disconnect();
-    },[])
+    }, [])
 
     useEffect(() => {
-        setSheet(createSheet())
+        populateSheet();
     }, [cells])
 
-    function updateServer(index, cellValue) {
-        index.text = cellValue;
+    const updateServer = useCallback(
+        (col, row, cellValue) => {
+            const index = { col, row, text: cellValue };
 
-        fetch('http://localhost:3000/api/Sheet/Save',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(
-                    index
-                )
-            })
-            .catch(err => console.error(err))
-    }
+            fetch('http://localhost:3000/api/Sheet/Save',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(
+                        index
+                    )
+                })
+                .catch(err => console.error(err))
+        },
+        [],
+    )
 
-    function getCellValue(rowIndex, colIndex) {
-        const rowData = cells[rowIndex + 1 + '']
-        if (!rowData) {
-            return ''
-        }
-        const cellData = rowData[ALPHABET[colIndex]]
+    function populateSheet() {
+        const newSheet = [...sheet];
 
-        return cellData || ''
-    }
+        cells && Object.keys(cells).forEach(row => {
+            newSheet[+row] = [...newSheet[+row]]
+            Object.keys(cells[row]).forEach(col => {
+                newSheet[+row][ALPHABET.indexOf(col)] = cells[+row][col];
+            });
+        });
 
-    function getRow(rowIndex) {
-        return (new Array(cols))
-            .fill(0)
-            .map((value, colIndex) => (<Cell updateServer={updateServer} key={colIndex} value={getCellValue(rowIndex, colIndex)}
-                index={{ col: ALPHABET[colIndex], row: rowIndex + 1 }}></Cell>))
+        setSheet(newSheet);
     }
 
     function createSheet() {
         return (new Array(rows))
-            .fill(0)
-            .map((column, rowIndex) => {
-                return (<div className="row" key={rowIndex}>{getRow(rowIndex)}</div>)
-            })
+            .fill(
+                (new Array(cols))
+                    .fill('')
+            )
     }
 
-    const onCellSave = function (cells) {
-        setCells(cells);
-    }
-
-    return (
-        <div className="sheet" data-testid="sheet">
-            {sheet}
-        </div>
+    const header = useMemo(() =>
+        (new Array(cols))
+            .fill('test')
+        , [rows]
     )
-}
+
+    return useMemo(
+        () => (<div className="sheet" data-testid="sheet">
+            {
+                <>
+                    <div className="cell_header"></div>
+                    {header && header.map((item, index) =>
+                        <div className="cell_header" key={index}>{ALPHABET[index]}</div>
+                    )}
+
+                    {sheet && sheet.map((row, rowIndex) =>
+
+                        <div className="row" key={rowIndex}>
+                            <div className="cell_header">{rowIndex}</div>
+                            {row.map((value, colIndex) => {
+                                return <Cell
+                                    key={rowIndex + colIndex}
+                                    value={value}
+                                    row={rowIndex}
+                                    col={ALPHABET[colIndex]}
+                                    updateServer={updateServer}
+                                ></Cell>
+                            })}
+                        </div>
+                    )}
+                </>
+            }
+        </div>),
+        [sheet]
+    )
+})
 
 export default Sheet
