@@ -30,24 +30,6 @@ const Sheet = ({ rows, cols }) => {
         return () => socket.disconnect();
     })
 
-    // const onCellSave = function ({ row, col, text }) {
-
-    //    console.log('sheet', sheet);
-    //     console.log('cells', cells);
-        
-    //     const newSheet = [].concat(sheet);
-
-    //     console.log({ row, col, text });
-
-    //     newSheet[[row][ALPHABET.indexOf(col)]] = <Cell key={col} value={text}
-    //         index={{ col: ALPHABET[col], row: row + 1 }}></Cell>;
-
-    //     console.log('socket is active');
-
-    //     setSheet(newSheet);
-    // }
-
-    
     const onCellSave = function (cells) {
         setCells(cells);
     }
