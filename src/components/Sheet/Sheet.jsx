@@ -4,39 +4,52 @@ import Cell from '../Cell/Cell';
 import io from 'socket.io-client';
 
 
-//TODO:fix abc
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWZ'.toLowerCase().split('')
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase().split('')
 
 const Sheet = ({ rows, cols }) => {
-
+    
     const [cells, setCells] = useState({});
     const [sheet, setSheet] = useState(() => createSheet());
-
+    
     useEffect(() => {
         fetch('http://localhost:3000/api/Sheet/Get')
-            .then(res => res.json())
-            .then(res => {
-                setCells(res.Cells)
-            })
+        .then(res => res.json())
+        .then(res => {
+            setCells(res.Cells)
+        })
     }, [])
-
+    
     useEffect(() => {
         const socket = io('http://localhost:3000');
 
         socket.on("onCellSave", function (cells) {
+            console.log('test');
+            
             onCellSave(cells);
         });
 
         return () => socket.disconnect();
     })
 
-    const onCellSave = function (cells) {
-        setCells(cells);
-    }
-
     useEffect(() => {
         setSheet(createSheet())
     }, [cells])
+
+    function updateServer(index, cellValue) {
+        index.text = cellValue;
+
+        fetch('http://localhost:3000/api/Sheet/Save',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    index
+                )
+            })
+            .catch(err => console.error(err))
+    }
 
     function getCellValue(rowIndex, colIndex) {
         const rowData = cells[rowIndex + 1 + '']
@@ -51,7 +64,7 @@ const Sheet = ({ rows, cols }) => {
     function getRow(rowIndex) {
         return (new Array(cols))
             .fill(0)
-            .map((value, colIndex) => (<Cell key={colIndex} value={getCellValue(rowIndex, colIndex)}
+            .map((value, colIndex) => (<Cell updateServer={updateServer} key={colIndex} value={getCellValue(rowIndex, colIndex)}
                 index={{ col: ALPHABET[colIndex], row: rowIndex + 1 }}></Cell>))
     }
 
@@ -61,6 +74,10 @@ const Sheet = ({ rows, cols }) => {
             .map((column, rowIndex) => {
                 return (<div className="row" key={rowIndex}>{getRow(rowIndex)}</div>)
             })
+    }
+
+    const onCellSave = function (cells) {
+        setCells(cells);
     }
 
     return (

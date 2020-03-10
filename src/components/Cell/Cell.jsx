@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './Cell.css'
 
-const Cell = ({ value, index }) => {
+const Cell = ({ value, index, updateServer }) => {
     const [cellValue, setCellValue] = useState(value);
     const [editing, setEditing] = useState(false);
 
@@ -19,23 +19,7 @@ const Cell = ({ value, index }) => {
 
     const onBlurHandle = () => {
         setEditing(false);
-        updateServer();
-    }
-
-    const updateServer = () => {
-        index.text = cellValue;
-
-        fetch('http://localhost:3000/api/Sheet/Save',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(
-                    index
-                )
-            })
-            .catch(err => console.error(err))
+        updateServer(index, cellValue);
     }
 
     return editing ?
